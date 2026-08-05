@@ -13,6 +13,7 @@ const COLORS = [
   '#e57373', // Z - red
   '#64b5f6', // J - pale blue
   '#ffb74d', // L - orange
+  '#c9a86a', // N - tuerca (bronce)
 ];
 
 const PIECES = [
@@ -24,7 +25,12 @@ const PIECES = [
   [[5,5,0],[0,5,5],[0,0,0]],                  // Z
   [[6,0,0],[6,6,6],[0,0,0]],                  // J
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
+  [[8,8,8],[8,0,8],[8,8,8]],                  // N - tuerca (reto, 3x3 con hueco central)
 ];
+
+const STANDARD_PIECE_COUNT = 7;
+const NUT_PIECE_TYPE = 8;
+const NUT_PIECE_CHANCE = 0.08; // probabilidad de que salga la pieza reto
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
@@ -68,7 +74,9 @@ function createBoard() {
 }
 
 function randomPiece() {
-  const type = Math.floor(Math.random() * 7) + 1;
+  const type = Math.random() < NUT_PIECE_CHANCE
+    ? NUT_PIECE_TYPE
+    : Math.floor(Math.random() * STANDARD_PIECE_COUNT) + 1;
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
 }
