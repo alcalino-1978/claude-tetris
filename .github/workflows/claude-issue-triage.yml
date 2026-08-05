@@ -44,5 +44,9 @@ jobs:
                - Sugerencia de enfoque para la solución (sin escribir el código todavía).
                Este comentario servirá de base para implementar la solución más adelante.
 
+               El comentario debe estar redactado en formato Markdown válido y bien
+               interpretable por GitHub (encabezados, listas, bloques de código con
+               ```lenguaje cuando corresponda, negritas, etc.), no como texto plano.
+
             No hagas cambios de código ni abras PRs — solo etiqueta y comenta.
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh label list:*),Bash(gh label create:*)"'
