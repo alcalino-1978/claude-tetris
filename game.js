@@ -34,6 +34,41 @@ const NUT_PIECE_CHANCE = 0.08; // probabilidad de que salga la pieza reto
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
+const SKINS = {
+  retro: {
+    colors: COLORS,
+  },
+  neon: {
+    colors: [
+      null,
+      '#00e5ff',
+      '#ffee00',
+      '#e040fb',
+      '#00ff6a',
+      '#ff1744',
+      '#2979ff',
+      '#ff9100',
+      '#ff6ec7',
+    ],
+  },
+  pastel: {
+    colors: [
+      null,
+      '#a8e6ea',
+      '#fff2b2',
+      '#dcbdea',
+      '#c3e8c5',
+      '#f5c2c0',
+      '#bcd8f7',
+      '#fcd9ae',
+      '#e3d2b8',
+    ],
+  },
+  pixel: {
+    colors: COLORS,
+  },
+};
+
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next-canvas');
@@ -49,12 +84,14 @@ const resumeBtn = document.getElementById('resume-btn');
 const pauseRestartBtn = document.getElementById('pause-restart-btn');
 const startLevelSelect = document.getElementById('start-level-select');
 const themeToggle = document.getElementById('theme-toggle');
+const skinSelect = document.getElementById('skin-select');
 
 const GRID_COLORS = { dark: '#22222e', light: '#dde0ea' };
 const THEME_KEY = 'tetris-theme';
 const START_LEVEL_KEY = 'tetris-start-level';
+const SKIN_KEY = 'tetris-skin';
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId, gridColor;
+let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId, gridColor, currentSkin;
 let startLevel = 1;
 
 function initStartLevel() {
@@ -91,6 +128,22 @@ themeToggle.addEventListener('change', () => {
   const theme = themeToggle.checked ? 'light' : 'dark';
   localStorage.setItem(THEME_KEY, theme);
   applyTheme(theme);
+});
+
+function applySkin(skin) {
+  currentSkin = SKINS[skin] ? skin : 'retro';
+  skinSelect.value = currentSkin;
+}
+
+function initSkin() {
+  const saved = localStorage.getItem(SKIN_KEY) || 'retro';
+  applySkin(saved);
+}
+
+skinSelect.addEventListener('change', () => {
+  const skin = skinSelect.value;
+  localStorage.setItem(SKIN_KEY, skin);
+  applySkin(skin);
 });
 
 function createBoard() {
@@ -211,13 +264,53 @@ function updateHUD() {
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  const skin = SKINS[currentSkin] || SKINS.retro;
+  const color = skin.colors[colorIndex];
+  const bx = x * size + 1;
+  const by = y * size + 1;
+  const bw = size - 2;
+  const bh = size - 2;
+
   context.globalAlpha = alpha ?? 1;
   context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+
+  if (currentSkin === 'neon') {
+    context.shadowBlur = 12;
+    context.shadowColor = color;
+    context.fillRect(bx, by, bw, bh);
+    context.shadowBlur = 0;
+  } else if (currentSkin === 'pastel') {
+    const radius = size * 0.25;
+    context.beginPath();
+    if (context.roundRect) {
+      context.roundRect(bx, by, bw, bh, radius);
+    } else {
+      context.moveTo(bx + radius, by);
+      context.arcTo(bx + bw, by, bx + bw, by + bh, radius);
+      context.arcTo(bx + bw, by + bh, bx, by + bh, radius);
+      context.arcTo(bx, by + bh, bx, by, radius);
+      context.arcTo(bx, by, bx + bw, by, radius);
+      context.closePath();
+    }
+    context.fill();
+  } else {
+    context.fillRect(bx, by, bw, bh);
+  }
+
   // highlight
   context.fillStyle = 'rgba(255,255,255,0.12)';
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+  context.fillRect(bx, by, bw, 4);
+
+  if (currentSkin === 'pixel') {
+    const half = bw / 2;
+    context.fillStyle = 'rgba(0,0,0,0.18)';
+    context.fillRect(bx, by, half, half);
+    context.fillRect(bx + half, by + half, bw - half, bh - half);
+    context.fillStyle = 'rgba(255,255,255,0.18)';
+    context.fillRect(bx + half, by, bw - half, half);
+    context.fillRect(bx, by + half, half, bh - half);
+  }
+
   context.globalAlpha = 1;
 }
 
@@ -312,6 +405,7 @@ function loop(ts) {
 
 function init() {
   initTheme();
+  initSkin();
   board = createBoard();
   score = 0;
   lines = 0;
