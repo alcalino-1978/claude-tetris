@@ -49,6 +49,16 @@
           <button id="reset-scores-btn" class="btn-secondary">Resetear récords</button>
         </div>
 
+        <div class="panel-section">
+          <span class="label">SKIN</span>
+          <select id="skin-select" class="skin-select" aria-label="Elegir skin visual">
+            <option value="retro">Retro</option>
+            <option value="neon">Neón</option>
+            <option value="pastel">Pastel</option>
+            <option value="pixel">Pixel Art</option>
+          </select>
+        </div>
+
         <div class="panel-section controls">
           <span class="label">CONTROLS</span>
           <ul>
@@ -56,28 +66,55 @@
             <li><kbd>↑</kbd> rotar</li>
             <li><kbd>↓</kbd> bajar</li>
             <li><kbd>Space</kbd> caída</li>
-            <li><kbd>P</kbd> pausa</li>
+            <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
           </ul>
         </div>
       </aside>
     </div>
 
-    <div id="overlay" class="overlay hidden">
+    <div id="overlay" class="overlay hidden" data-mode="gameover">
       <div class="overlay-box">
-        <p id="overlay-title">GAME OVER</p>
-        <p id="overlay-score"></p>
-        <div id="name-entry" class="name-entry hidden">
-          <input type="text" id="name-input" maxlength="12" placeholder="Tu nombre" autocomplete="off" />
-          <button id="name-confirm-btn">Guardar</button>
+        <div id="gameover-content">
+          <p id="overlay-title">GAME OVER</p>
+          <p id="overlay-score"></p>
+          <div id="name-entry" class="name-entry hidden">
+            <input type="text" id="name-input" maxlength="12" placeholder="Tu nombre" autocomplete="off" />
+            <button id="name-confirm-btn">Guardar</button>
+          </div>
+          <div id="overlay-records" class="overlay-records hidden">
+            <ol id="overlay-highscores-list" class="highscores-list"></ol>
+            <div class="stats-mini">
+              <span>Mejor combo: <strong id="overlay-best-combo">0</strong></span>
+              <span>Líneas máx: <strong id="overlay-max-lines">0</strong></span>
+            </div>
+          </div>
+          <button id="restart-btn">Reiniciar</button>
         </div>
-        <div id="overlay-records" class="overlay-records hidden">
-          <ol id="overlay-highscores-list" class="highscores-list"></ol>
-          <div class="stats-mini">
-            <span>Mejor combo: <strong id="overlay-best-combo">0</strong></span>
-            <span>Líneas máx: <strong id="overlay-max-lines">0</strong></span>
+
+        <div id="pause-content">
+          <p class="pause-title">PAUSA</p>
+
+          <div class="pause-actions">
+            <button id="resume-btn">Reanudar</button>
+            <button id="pause-restart-btn">Reiniciar</button>
+          </div>
+
+          <div class="pause-section">
+            <label class="label" for="start-level-select">NIVEL INICIAL</label>
+            <select id="start-level-select"></select>
+          </div>
+
+          <div class="pause-section pause-controls">
+            <span class="label">CONTROLES</span>
+            <ul>
+              <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+              <li><kbd>↑</kbd> rotar</li>
+              <li><kbd>↓</kbd> bajar</li>
+              <li><kbd>Space</kbd> caída</li>
+              <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+            </ul>
           </div>
         </div>
-        <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
   </div>
